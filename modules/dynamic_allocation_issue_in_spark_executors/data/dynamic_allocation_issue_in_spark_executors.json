@@ -1,0 +1,182 @@
+{
+  "name": "dynamic_allocation_issue_in_spark_executors",
+  "description": "Dynamic allocation in Spark executors refers to the feature that allows the cluster to allocate and deallocate resources at runtime based on the workload. This feature is designed to optimize the cluster's resource utilization by dynamically adjusting the number of executors based on the workload. However, if the dynamic allocation is not working as expected, it can cause performance issues and hinder the overall efficiency of the cluster. Troubleshooting and optimizing dynamic allocation is necessary to ensure that the cluster is functioning optimally.",
+  "params": [
+    {
+      "name": "NEW_NUMBER_OF_NODES",
+      "value": ""
+    },
+    {
+      "name": "SPARK_LOGS",
+      "value": ""
+    },
+    {
+      "name": "MINIMUM_CPU_THRESHOLD",
+      "value": ""
+    },
+    {
+      "name": "SPARK_CONFIG_FILE",
+      "value": ""
+    },
+    {
+      "name": "MINIMUM_MEMORY_THRESHOLD",
+      "value": ""
+    },
+    {
+      "name": "PATH_TO_SPARK_HOME",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Dynamic allocation issue in Spark executors.\nDynamic allocation in Spark executors refers to the feature that allows the cluster to allocate and deallocate resources at runtime based on the workload. This feature is designed to optimize the cluster's resource utilization by dynamically adjusting the number of executors based on the workload. However, if the dynamic allocation is not working as expected, it can cause performance issues and hinder the overall efficiency of the cluster. Troubleshooting and optimizing dynamic allocation is necessary to ensure that the cluster is functioning optimally."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if Dynamic Allocation is enabled"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.dynamicAllocation.enabled ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if Executor Memory is set"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.executor.memory ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if Driver Memory is set"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.driver.memory ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if spark.shuffle.service.enabled is set to true"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.shuffle.service.enabled ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the number of executor cores is set"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.executor.cores ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the number of Executors is set"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.executor.instances ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the Spark Event log is enabled"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.eventLog.enabled ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if the Spark Event log directory is set"
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep spark.eventLog.dir ${SPARK_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_18",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check if there are any errors in Spark logs related to Dynamic Allocation"
+    },
+    {
+      "name": "cell_19",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `grep \"DynamicAllocation.*error\" ${SPARK_LOGS}`"
+    },
+    {
+      "name": "cell_20",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Insufficient resources such as memory and CPU on the Spark cluster causing the dynamic allocation to fail."
+    },
+    {
+      "name": "cell_21",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_spark_cluster_resource_check($MINIMUM_CPU_THRESHOLD, $MINIMUM_MEMORY_THRESHOLD)"
+    },
+    {
+      "name": "cell_22",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Consider increasing the number of nodes in the Spark cluster to provide more resources for dynamic allocation."
+    },
+    {
+      "name": "cell_23",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_edit_spark_cluster_config($NEW_NUMBER_OF_NODES, $SPARK_CONFIG_FILE, $PATH_TO_SPARK_HOME)"
+    }
+  ]
+}
