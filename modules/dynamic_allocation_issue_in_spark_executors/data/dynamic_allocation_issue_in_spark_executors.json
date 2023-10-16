@@ -3,7 +3,11 @@
   "description": "Dynamic allocation in Spark executors refers to the feature that allows the cluster to allocate and deallocate resources at runtime based on the workload. This feature is designed to optimize the cluster's resource utilization by dynamically adjusting the number of executors based on the workload. However, if the dynamic allocation is not working as expected, it can cause performance issues and hinder the overall efficiency of the cluster. Troubleshooting and optimizing dynamic allocation is necessary to ensure that the cluster is functioning optimally.",
   "params": [
     {
-      "name": "NEW_NUMBER_OF_NODES",
+      "name": "MINIMUM_CPU_THRESHOLD",
+      "value": ""
+    },
+    {
+      "name": "MINIMUM_MEMORY_THRESHOLD",
       "value": ""
     },
     {
@@ -11,15 +15,11 @@
       "value": ""
     },
     {
-      "name": "MINIMUM_CPU_THRESHOLD",
+      "name": "NEW_NUMBER_OF_NODES",
       "value": ""
     },
     {
       "name": "SPARK_CONFIG_FILE",
-      "value": ""
-    },
-    {
-      "name": "MINIMUM_MEMORY_THRESHOLD",
       "value": ""
     },
     {
@@ -164,7 +164,7 @@
       "name": "cell_21",
       "type": "OP_LANG",
       "enabled": true,
-      "content": "host | host_name=$HOST_NAME | invoke_spark_cluster_resource_check($MINIMUM_CPU_THRESHOLD, $MINIMUM_MEMORY_THRESHOLD)"
+      "content": "host | host_name=$HOST_NAME | invoke_insufficient_resources_diagnosis($MINIMUM_CPU_THRESHOLD, $MINIMUM_MEMORY_THRESHOLD)"
     },
     {
       "name": "cell_22",
@@ -176,7 +176,7 @@
       "name": "cell_23",
       "type": "OP_LANG",
       "enabled": true,
-      "content": "host | host_name=$HOST_NAME | invoke_edit_spark_cluster_config($NEW_NUMBER_OF_NODES, $SPARK_CONFIG_FILE, $PATH_TO_SPARK_HOME)"
+      "content": "host | host_name=$HOST_NAME | invoke_increase_num_nodes($NEW_NUMBER_OF_NODES, $SPARK_CONFIG_FILE, $PATH_TO_SPARK_HOME)"
     }
   ]
 }

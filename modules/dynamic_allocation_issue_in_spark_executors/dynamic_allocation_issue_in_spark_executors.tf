@@ -1,46 +1,46 @@
 resource "shoreline_notebook" "dynamic_allocation_issue_in_spark_executors" {
   name       = "dynamic_allocation_issue_in_spark_executors"
   data       = file("${path.module}/data/dynamic_allocation_issue_in_spark_executors.json")
-  depends_on = [shoreline_action.invoke_spark_cluster_resource_check,shoreline_action.invoke_edit_spark_cluster_config]
+  depends_on = [shoreline_action.invoke_insufficient_resources_diagnosis,shoreline_action.invoke_increase_num_nodes]
 }
 
-resource "shoreline_file" "spark_cluster_resource_check" {
-  name             = "spark_cluster_resource_check"
-  input_file       = "${path.module}/data/spark_cluster_resource_check.sh"
-  md5              = filemd5("${path.module}/data/spark_cluster_resource_check.sh")
+resource "shoreline_file" "insufficient_resources_diagnosis" {
+  name             = "insufficient_resources_diagnosis"
+  input_file       = "${path.module}/data/insufficient_resources_diagnosis.sh"
+  md5              = filemd5("${path.module}/data/insufficient_resources_diagnosis.sh")
   description      = "Insufficient resources such as memory and CPU on the Spark cluster causing the dynamic allocation to fail."
-  destination_path = "/tmp/spark_cluster_resource_check.sh"
+  destination_path = "/tmp/insufficient_resources_diagnosis.sh"
   resource_query   = "host"
   enabled          = true
 }
 
-resource "shoreline_file" "edit_spark_cluster_config" {
-  name             = "edit_spark_cluster_config"
-  input_file       = "${path.module}/data/edit_spark_cluster_config.sh"
-  md5              = filemd5("${path.module}/data/edit_spark_cluster_config.sh")
+resource "shoreline_file" "increase_num_nodes" {
+  name             = "increase_num_nodes"
+  input_file       = "${path.module}/data/increase_num_nodes.sh"
+  md5              = filemd5("${path.module}/data/increase_num_nodes.sh")
   description      = "Consider increasing the number of nodes in the Spark cluster to provide more resources for dynamic allocation."
-  destination_path = "/tmp/edit_spark_cluster_config.sh"
+  destination_path = "/tmp/increase_num_nodes.sh"
   resource_query   = "host"
   enabled          = true
 }
 
-resource "shoreline_action" "invoke_spark_cluster_resource_check" {
-  name        = "invoke_spark_cluster_resource_check"
+resource "shoreline_action" "invoke_insufficient_resources_diagnosis" {
+  name        = "invoke_insufficient_resources_diagnosis"
   description = "Insufficient resources such as memory and CPU on the Spark cluster causing the dynamic allocation to fail."
-  command     = "`chmod +x /tmp/spark_cluster_resource_check.sh && /tmp/spark_cluster_resource_check.sh`"
+  command     = "`chmod +x /tmp/insufficient_resources_diagnosis.sh && /tmp/insufficient_resources_diagnosis.sh`"
   params      = ["MINIMUM_CPU_THRESHOLD","MINIMUM_MEMORY_THRESHOLD"]
-  file_deps   = ["spark_cluster_resource_check"]
+  file_deps   = ["insufficient_resources_diagnosis"]
   enabled     = true
-  depends_on  = [shoreline_file.spark_cluster_resource_check]
+  depends_on  = [shoreline_file.insufficient_resources_diagnosis]
 }
 
-resource "shoreline_action" "invoke_edit_spark_cluster_config" {
-  name        = "invoke_edit_spark_cluster_config"
+resource "shoreline_action" "invoke_increase_num_nodes" {
+  name        = "invoke_increase_num_nodes"
   description = "Consider increasing the number of nodes in the Spark cluster to provide more resources for dynamic allocation."
-  command     = "`chmod +x /tmp/edit_spark_cluster_config.sh && /tmp/edit_spark_cluster_config.sh`"
+  command     = "`chmod +x /tmp/increase_num_nodes.sh && /tmp/increase_num_nodes.sh`"
   params      = ["NEW_NUMBER_OF_NODES","SPARK_CONFIG_FILE","PATH_TO_SPARK_HOME"]
-  file_deps   = ["edit_spark_cluster_config"]
+  file_deps   = ["increase_num_nodes"]
   enabled     = true
-  depends_on  = [shoreline_file.edit_spark_cluster_config]
+  depends_on  = [shoreline_file.increase_num_nodes]
 }
 
